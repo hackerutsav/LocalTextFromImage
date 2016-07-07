@@ -21,12 +21,14 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
@@ -69,7 +71,7 @@ import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity {
-    private int i=0;
+    private static int i=0;
     private static final String CLOUD_VISION_API_KEY = "AIzaSyCPEAGtVFHvIdzPJ5AlAIFVmKx0R2IkXeE";
     public static final String FILE_NAME = "temp.jpg";
 
@@ -90,13 +92,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+
+
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                 builder
                         .setMessage(R.string.dialog_select_prompt)
@@ -113,8 +111,7 @@ public class MainActivity extends AppCompatActivity {
                             }
                         });
                 builder.create().show();
-            }
-        });
+
 
         mImageDetails = (TextView) findViewById(R.id.image_details);
         mMainImage = (ImageView) findViewById(R.id.main_image);
@@ -182,7 +179,7 @@ public class MainActivity extends AppCompatActivity {
 
                 callCloudVision(bitmap);
                 saveToInternalStorage(bitmap);
-                loadImageFromStorage(0);
+//                loadImageFromStorage(0);
                 mMainImage.setImageBitmap(bitmap);
 
             } catch (IOException e) {
@@ -286,12 +283,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private String convertResponseToString(BatchAnnotateImagesResponse response) {
-        String message = "I found these things:\n\n";
+        String message = "";
         Log.d("response", response.toString());
 //        JSONObject responsemes = response.("responses").opt(0).optJSONObject("description");
 
         List<EntityAnnotation> labels = response.getResponses().get(0).getTextAnnotations();
         message += labels.get(0).getDescription();
+        SharedPreferences mSettings = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = mSettings.edit();
+        editor.putString(String.valueOf(i),message);
+        editor.putString("size",String.valueOf(i));
+        Log.d("mainactisize",String.valueOf(i));
+        editor.commit();
+        i++;
 //        if (labels != null) {
 //            for (EntityAnnotation label : labels) {
 //                message += String.format("%.3f: %s", label.getScore(), label.getDescription());
@@ -352,13 +356,14 @@ public class MainActivity extends AppCompatActivity {
 
         // Create imageDir
         File mypath=new File(directory,String.valueOf(i)+".jpg");
-        i++;
+
 
         FileOutputStream fos = null;
         try {
             fos = new FileOutputStream(mypath);
             // Use the compress method on the BitMap object to write image to the OutputStream
             bitmapImage.compress(Bitmap.CompressFormat.PNG, 100, fos);
+
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -371,22 +376,22 @@ public class MainActivity extends AppCompatActivity {
         return directory.getAbsolutePath();
     }
 
-    private void loadImageFromStorage(int val)
-    {
+//    private void loadImageFromStorage(int val)
+//    {
+//
+//        try {
+//            ContextWrapper cw = new ContextWrapper(getApplicationContext());
+//            File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
+//            File f=new File(directory,String.valueOf(0)+".jpg");
+//            Bitmap b = BitmapFactory.decodeStream(new FileInputStream(f));
+//            ImageView img=(ImageView)findViewById(R.id.imgPicker);
+//            img.setImageBitmap(b);
+//        }
+//        catch (FileNotFoundException e)
+//        {
+//            e.printStackTrace();
+//        }
 
-        try {
-            ContextWrapper cw = new ContextWrapper(getApplicationContext());
-            File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
-            File f=new File(directory,String.valueOf(0)+".jpg");
-            Bitmap b = BitmapFactory.decodeStream(new FileInputStream(f));
-            ImageView img=(ImageView)findViewById(R.id.imgPicker);
-            img.setImageBitmap(b);
-        }
-        catch (FileNotFoundException e)
-        {
-            e.printStackTrace();
-        }
-
-    }
+//    }
 
 }

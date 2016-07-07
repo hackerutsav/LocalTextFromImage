@@ -30,4 +30,6 @@ dependencies {
 
     compile 'com.google.apis:google-api-services-vision:v1-rev2-1.21.0'
     compile 'com.google.android.gms:play-services-appindexing:8.1.0'
+    compile 'com.jaeger.ninegridimageview:library:1.0.2'
+    compile 'com.squareup.picasso:picasso:2.5.2'
 }
