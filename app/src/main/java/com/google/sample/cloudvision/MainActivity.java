@@ -70,8 +70,10 @@ import java.util.List;
 
 
 
+
 public class MainActivity extends AppCompatActivity {
     private static int i=0;
+    public static ArrayList<ImageItem> imageitems = new ArrayList();
     private static final String CLOUD_VISION_API_KEY = "AIzaSyCPEAGtVFHvIdzPJ5AlAIFVmKx0R2IkXeE";
     public static final String FILE_NAME = "temp.jpg";
 
@@ -178,6 +180,7 @@ public class MainActivity extends AppCompatActivity {
                                 1200);
 
                 callCloudVision(bitmap);
+                imageitems.add(new ImageItem(bitmap,String.valueOf(i)));
                 saveToInternalStorage(bitmap);
 //                loadImageFromStorage(0);
                 mMainImage.setImageBitmap(bitmap);
@@ -288,7 +291,11 @@ public class MainActivity extends AppCompatActivity {
 //        JSONObject responsemes = response.("responses").opt(0).optJSONObject("description");
 
         List<EntityAnnotation> labels = response.getResponses().get(0).getTextAnnotations();
-        message += labels.get(0).getDescription();
+        try {
+            message += labels.get(0).getDescription();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         SharedPreferences mSettings = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = mSettings.edit();
         editor.putString(String.valueOf(i),message);

@@ -9,22 +9,26 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.google.sample.cloudvision.FirstActivity">
 
-    <com.jaeger.ninegridimageview.NineGridImageView
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:layout_width="match_parent"
-        app:imgGap="4dp"
-        app:showStyle="fill"
-        app:singleImgSize="120dp"/>
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rv_post_list"
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#e4e4e4"
-        android:visibility="visible">
-    </android.support.v7.widget.RecyclerView>
+        android:background="#f0f0f0">
+
+        <GridView
+            android:id="@+id/gridView"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:columnWidth="100dp"
+            android:drawSelectorOnTop="true"
+            android:gravity="center"
+            android:numColumns="auto_fit"
+            android:stretchMode="columnWidth"
+            android:verticalSpacing="5dp"
+            android:focusable="true"
+            android:clickable="true"/>
+
+    </RelativeLayout>
 
     <ImageView
         android:layout_width="60dp"
