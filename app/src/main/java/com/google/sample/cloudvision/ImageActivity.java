@@ -9,6 +9,7 @@ import android.graphics.BitmapFactory;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -17,10 +18,12 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
 public class ImageActivity extends AppCompatActivity {
+    private SharedPreferences mSettings;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mSettings = PreferenceManager.getDefaultSharedPreferences(this);
         setContentView(R.layout.activity_image);
         Intent iin= getIntent();
         Bundle b = iin.getExtras();
@@ -28,7 +31,9 @@ public class ImageActivity extends AppCompatActivity {
         if(b!=null)
         {
             String j =(String) b.get("pos");
-            loadImageFromStorage(j);
+            Log.d("posactima",j);
+            int pos = Integer.parseInt(j);
+            loadImageFromStorage(String.valueOf(pos));
         }
     }
 
@@ -36,9 +41,8 @@ public class ImageActivity extends AppCompatActivity {
     {
 
         try {
-            ContextWrapper cw = new ContextWrapper(getApplicationContext());
-            File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
-            File f=new File(directory,val+".jpg");
+            String path = mSettings.getString("path", "empty");
+            File f=new File(path,val+".jpg");
             Bitmap b = BitmapFactory.decodeStream(new FileInputStream(f));
             ImageView img=(ImageView)findViewById(R.id.image);
             img.setImageBitmap(b);

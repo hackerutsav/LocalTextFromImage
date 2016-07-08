@@ -56,6 +56,7 @@ import com.google.api.services.vision.v1.model.BatchAnnotateImagesResponse;
 import com.google.api.services.vision.v1.model.EntityAnnotation;
 import com.google.api.services.vision.v1.model.Feature;
 import com.google.api.services.vision.v1.model.Image;
+import com.google.gson.Gson;
 
 import org.json.JSONObject;
 
@@ -72,8 +73,8 @@ import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity {
-    private static int i=0;
-    public static ArrayList<ImageItem> imageitems = new ArrayList();
+    private int i;
+    public ArrayList<ImageItem> imageitems = new ArrayList<>();
     private static final String CLOUD_VISION_API_KEY = "AIzaSyCPEAGtVFHvIdzPJ5AlAIFVmKx0R2IkXeE";
     public static final String FILE_NAME = "temp.jpg";
 
@@ -181,6 +182,10 @@ public class MainActivity extends AppCompatActivity {
 
                 callCloudVision(bitmap);
                 imageitems.add(new ImageItem(bitmap,String.valueOf(i)));
+
+
+
+
                 saveToInternalStorage(bitmap);
 //                loadImageFromStorage(0);
                 mMainImage.setImageBitmap(bitmap);
@@ -298,11 +303,13 @@ public class MainActivity extends AppCompatActivity {
         }
         SharedPreferences mSettings = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = mSettings.edit();
-        editor.putString(String.valueOf(i),message);
-        editor.putString("size",String.valueOf(i));
-        Log.d("mainactisize",String.valueOf(i));
+        String size = mSettings.getString("size","0");
+        editor.putString(String.valueOf(size),message);
+        int newsize  = Integer.parseInt(size) +1;
+        editor.putString("size",String.valueOf(newsize));
+        Log.d("mainactisize",String.valueOf(newsize));
         editor.commit();
-        i++;
+
 //        if (labels != null) {
 //            for (EntityAnnotation label : labels) {
 //                message += String.format("%.3f: %s", label.getScore(), label.getDescription());
@@ -362,7 +369,11 @@ public class MainActivity extends AppCompatActivity {
 
 
         // Create imageDir
-        File mypath=new File(directory,String.valueOf(i)+".jpg");
+        SharedPreferences mSettings = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = mSettings.edit();
+        String size = mSettings.getString("size","0");
+        Log.d("mianactisize",size);
+        File mypath=new File(directory,size+".jpg");
 
 
         FileOutputStream fos = null;
@@ -380,6 +391,9 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
+        editor.putString("path",directory.getAbsolutePath());
+        Log.d("mianactipath",mSettings.getString("path","empty"));
+        editor.commit();
         return directory.getAbsolutePath();
     }
 
